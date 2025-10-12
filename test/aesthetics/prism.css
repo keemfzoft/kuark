@@ -1,0 +1,9 @@
+.prism {
+    background: linear-gradient(45deg, #f0f, #0ff);
+}
+
+@container card (min-width: 500px) {
+    .prism-text {
+        background-color: blue;
+    }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="../dist/styles.css" />
+</head>
+<body>
+    <div>
+        <div id="block1"></div>
+        <div id="block2"></div>
+        <div id="block3"></div>
+        <div id="block4"></div>
+    </div>
+
+    <div id="app"></div>
+
+    <script src="../dist/assets/app.js"></script>
+
+    <script type="module" src="../dist/assets/component.js"></script>
+    <script>
+        const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+        function render(glyph, parent) {
+            let dom = null;
+            //if (glyph.class === Symbol.for("kuark.glyph") && typeof glyph.type === "string") {
+            if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
+                dom = document.createElementNS(XHTML_NAMESPACE, glyph.type);
+
+                if (glyph.props.className) {
+                    dom.className = glyph.props.className;
+                }
+
+                if (glyph.props.aesthetic) {
+                    dom.className = `${dom.className} ${glyph.props.aesthetic}`;
+                }
+            } else if (typeof glyph === "string") {
+                dom = document.createTextNode(glyph);
+            }
+            if (dom) {
+                if (typeof glyph === "object" && glyph.props.children) {
+                    let children = glyph.props.children;
+                    if (typeof children === "string") {
+                        children = [children];
+                    }
+                    for (let child of children) {
+                        render(child, dom);
+                        parent.appendChild(dom);
+                    }
+                } else {
+                    parent.appendChild(dom);
+                }
+            }
+            return dom;
+        }
+
+        function injectFragment(name, css) {
+            //const css = styleFragments[name];
+            if (!css) return;
+
+            const style = document.createElement('style');
+            style.textContent = css;
+            document.head.appendChild(style);
+        }
+
+        const worker = new Worker('./worker.js');
+
+        worker.postMessage(42); // Send input
+
+        worker.onmessage = (event) => {
+            console.log('Worker result:', event.data);
+            render(event.data, document.getElementById("block1"));
+        };
+
+        const worker2 = new Worker('./worker2.js');
+
+        worker2.postMessage(42); // Send input
+
+        worker2.onmessage = (event) => {
+            console.log('Worker result:', event.data);
+            render(event.data, document.getElementById("block2"));
+        };
+
+        const worker3 = new Worker('./worker3.js', { type: "module" });
+
+        worker3.postMessage("block3"); // Send input
+        worker3.postMessage("block4"); // Send input
+
+        worker3.onmessage = (event) => {
+            console.log('Worker result:', event.data);
+            injectFragment("test", event.data.css);
+            render(event.data.glyph, document.getElementById(event.data.parent));
+        };
+
+        worker3.onerror = (error) => {
+            console.log(error);
+        }
+    </script>
+</body>
+</html>
