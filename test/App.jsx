@@ -4,6 +4,10 @@ export function App() {
             <div curator="header">Header</div>
             <Curator name="content" />
             <Nested />
+            <Container>
+                <h2>Container</h2>
+                <p>This is a container</p>
+            </Container>
             <div curator="footer">Footer</div>
         </div>
     );
@@ -14,6 +18,14 @@ function Curator(props) {
 
     return (
         <div curator={props.name}></div>
+    );
+}
+
+function Container(props) {
+    return (
+        <div>
+            {props.children}
+        </div>
     );
 }
 
