@@ -5,6 +5,7 @@ export default function TestPlugin() {
             console.log('Input files:', options.input);
 
             options.input.header = "test/curators/Header.jsx";
+            options.input.content = "test/curators/Content.jsx";
             options.input.footer = "test/curators/Footer.jsx";
         },
         generateBundle(_, bundle) {
