@@ -31,13 +31,21 @@ export function render(glyph, parent, option) {
         }
 
         if (glyph.props.curator) {
-            dom.id = glyph.props.curator;
+            if (glyph.props.glyph) {
+                dom.id = glyph.props.glyph;
+            } else {
+                dom.id = glyph.props.curator;
+            }
 
             if (option === "paint") {
                 for (const curator of curators) {
                     if (curator.name == glyph.props.curator) {
-                        console.log(curator);
-                        curator.instance.paint();
+                        if (glyph.props.glyph) {
+                            curator.instance.paint(glyph.props.glyph);
+                        } else {
+                            curator.instance.paint();
+                        }
+                        
                         break;
                     }
                 }

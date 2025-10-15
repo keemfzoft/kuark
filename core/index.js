@@ -47,7 +47,14 @@ class Curator {
         render(ev.data.glyph, el);
     }
 
-    paint() {
-        this.worker.postMessage("paint");
+    paint(glyph) {
+        if (glyph) {
+            this.worker.postMessage({
+                action: "paint",
+                glyph,
+            });
+        } else {
+            this.worker.postMessage("paint");
+        }
     }
 }

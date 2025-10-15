@@ -3,6 +3,11 @@ export function App() {
         <div layout="admin">
             <div curator="header">Header</div>
             <Curator name="content" />
+            <div>
+                <div curator="poly" glyph="glyph1"></div>
+                <div curator="poly" glyph="glyph2"></div>
+                <div curator="poly" glyph="glyph3"></div>
+            </div>
             <Nested />
             <Container>
                 <h2>Container</h2>

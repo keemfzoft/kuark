@@ -8,6 +8,7 @@ export default function TestPlugin() {
             options.input.content = "test/curators/Content.jsx";
             options.input.footer = "test/curators/Footer.jsx";
             options.input.test = "test/curators/Test.jsx";
+            options.input.poly = "test/curators/Poly.jsx";
         },
         generateBundle(_, bundle) {
             const compiledFiles = Object.keys(bundle);
