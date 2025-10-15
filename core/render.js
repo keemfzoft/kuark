@@ -30,6 +30,18 @@ export function render(glyph, parent, option) {
             dom.className = `${dom.className} ${glyph.props.aesthetic}`;
         }
 
+        if (glyph.props.hint) {
+            const hintDom = document.createElementNS(XHTML_NAMESPACE, "span");
+            const hintText = document.createTextNode(glyph.props.hint);
+
+            hintDom.appendChild(hintText);
+            hintDom.id = "test-reader-hint";
+            hintDom.className = "visually-hidden";
+
+            dom.setAttribute("aria-describedby", "test-reader-hint");
+            parent.appendChild(hintDom);
+        }
+
         if (glyph.props.curator) {
             if (glyph.props.glyph) {
                 dom.id = glyph.props.glyph;

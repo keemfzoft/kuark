@@ -20,7 +20,7 @@ function Glyph3() {
     return (
         <div aesthetic="prism">
             <h1>Glyph 3</h1>
-            <small>This is a test glyph 3</small>
+            <small hint="Test accessibility">This is a test glyph 3</small>
         </div>
     );
 }

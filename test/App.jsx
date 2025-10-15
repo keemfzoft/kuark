@@ -12,6 +12,7 @@ export function App() {
             <Container>
                 <h2>Container</h2>
                 <p>This is a container</p>
+                <div hint="This is for accessibility">Accessibility Test</div>
             </Container>
             <div curator="footer">Footer</div>
         </div>
