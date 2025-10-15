@@ -7,6 +7,7 @@ export default function TestPlugin() {
             options.input.header = "test/curators/Header.jsx";
             options.input.content = "test/curators/Content.jsx";
             options.input.footer = "test/curators/Footer.jsx";
+            options.input.test = "test/curators/Test.jsx";
         },
         generateBundle(_, bundle) {
             const compiledFiles = Object.keys(bundle);
