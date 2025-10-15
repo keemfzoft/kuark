@@ -1,8 +1,16 @@
 import { spawn } from "./index";
 
-export const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+const curators = new Set();
 
-export function render(glyph, parent) {
+export function render(glyph, parent, option) {
+    if (option == "prefetch-curators") {
+        prefetch(glyph);
+        render(glyph, parent, "paint");
+
+        return;
+    }
+
     let dom = null;
 
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
@@ -23,7 +31,17 @@ export function render(glyph, parent) {
         if (glyph.props.curator) {
             dom.id = glyph.props.curator;
 
-            spawn("../dist/assets/" + glyph.props.curator + ".js");
+            if (option === "paint") {
+                for (const curator of curators) {
+                    if (curator.name == glyph.props.curator) {
+                        console.log(curator);
+                        curator.instance.paint();
+                        break;
+                    }
+                }
+            } else {
+                spawn("../dist/assets/" + glyph.props.curator + ".js");
+            }
         }
     } else if (typeof glyph === "string") {
         dom = document.createTextNode(glyph);
@@ -38,7 +56,7 @@ export function render(glyph, parent) {
             }
 
             for (let child of children) {
-                render(child, dom);
+                render(child, dom, option);
                 parent.appendChild(dom);
             }
         } else {
@@ -47,4 +65,31 @@ export function render(glyph, parent) {
     }
 
     return dom;
+}
+
+function prefetch(glyph) {
+    if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
+        if (glyph.props.curator) {
+            if (!curators.has(glyph.props.curator)) {
+                const curator = spawn("../dist/assets/" + glyph.props.curator + ".js", false);
+
+                curators.add({
+                    name: glyph.props.curator,
+                    instance: curator,
+                });
+            }
+        }
+    }
+
+    if (typeof glyph === "object" && glyph.props.children) {
+        let children = glyph.props.children;
+
+        if (typeof children === "string") {
+            children = [children];
+        }
+
+        for (let child of children) {
+            prefetch(child);
+        }
+    }
 }

@@ -22,6 +22,7 @@ async function getConfig() {
                         main: "test/index.jsx",
                         component: "test/component.jsx",
                         glyph: "test/sample.glyph",
+                        prefetch: "test/prefetch.js",
                     },
                     output: {
                         entryFileNames: 'assets/[name].js',
