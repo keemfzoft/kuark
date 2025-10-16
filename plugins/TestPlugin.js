@@ -14,7 +14,7 @@ export default function TestPlugin() {
         },
         generateBundle(_, bundle) {
             const compiledFiles = Object.keys(bundle);
-            console.log('Compiled files:', compiledFiles);
+            //console.log('Compiled files:', compiledFiles);
         },
     };
 }

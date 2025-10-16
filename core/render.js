@@ -26,11 +26,16 @@ export function render(glyph, parent, option, mode = "test") {
         }
 
         if (glyph.props.layout) {
-            dom.className = `${dom.className} ${glyph.props.layout}`;
+            dom.className = `${dom.className} ${glyph.props.layout}-layout`;
         }
 
         if (glyph.props.aesthetic) {
-            dom.className = `${dom.className} ${glyph.props.aesthetic}`;
+            dom.className = `${dom.className} ${glyph.props.aesthetic}-aesthetic`;
+        }
+
+        // For testing purposes
+        if (glyph.props.source) {
+            dom.src = glyph.props.source;
         }
 
         if (glyph.props.hint) {
@@ -63,7 +68,7 @@ export function render(glyph, parent, option, mode = "test") {
                             curator.instance.paint(glyph.props.glyph);
                         } else {
                             console.log("paint default");
-                            curator.instance.paint();
+                            curator.instance.paint(glyph.props.curator);
                         }
                         
                         break;
@@ -100,6 +105,23 @@ export function render(glyph, parent, option, mode = "test") {
     }
 
     return dom;
+}
+
+export function emit(ev) {
+    if (typeof ev.data === "object") {
+        if (ev.data.action == "paint") {
+            for (let glyph of glyphs) {
+                if (glyph.name == ev.data.glyph) {
+                    self.postMessage({
+                        target: ev.data.glyph,
+                        glyph: glyph.component(),
+                    });
+                    
+                    break;
+                }
+            }
+        }
+    }
 }
 
 function prefetch(glyph, mode = "test") {
@@ -139,4 +161,26 @@ function prefetch(glyph, mode = "test") {
             }
         }
     }
+}
+
+function resolve(glyph) {
+    if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
+        return resolve(glyph.type());
+    }
+
+    if (typeof glyph === "object" && glyph.props.children) {
+        let children = glyph.props.children;
+
+        if (!Array.isArray(children)) {
+            //children = [children];
+        }
+
+        if (Array.isArray(children)) {
+            for (let [index, child] of children.entries()) {
+                glyph.props.children[index] = resolve(child);
+            }
+        }
+    }
+
+    return glyph;
 }

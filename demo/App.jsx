@@ -1,5 +1,5 @@
 export function App() {
     return (
-        <div curator="header" glyph="header">Demo</div>
+        <div curator="poly" glyph="cover" layout="simple"></div>
     );
 }
