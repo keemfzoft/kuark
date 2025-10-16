@@ -3,6 +3,7 @@ import path from "path";
 import TestPlugin from "./plugins/TestPlugin";
 import TestTransformPlugin from "./plugins/TestTransformPlugin";
 import TestAggregatePlugin from "./plugins/TestAggregatePlugin";
+import { Kuark } from "./plugins/Kuark";
 
 async function getConfig() {
     return defineConfig(async ({ mode }) => {
@@ -23,6 +24,7 @@ async function getConfig() {
                         component: "test/component.jsx",
                         glyph: "test/sample.glyph",
                         prefetch: "test/prefetch.js",
+                        demo: "demo/index.jsx",
                     },
                     output: {
                         entryFileNames: 'assets/[name].js',
@@ -42,6 +44,7 @@ async function getConfig() {
                 minify: false,
             },
             plugins: [
+                Kuark(),
                 TestTransformPlugin(),
                 TestPlugin(),
                 TestAggregatePlugin(),

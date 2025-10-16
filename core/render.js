@@ -3,15 +3,18 @@ import { spawn } from "./index";
 const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 const curators = [];
 
-export function render(glyph, parent, option) {
+export function render(glyph, parent, option, mode = "test") {
     if (option == "prefetch-curators") {
-        prefetch(glyph);
+        console.log(mode);
+        prefetch(glyph, mode);
         render(glyph, parent, "paint");
 
         console.log(curators);
 
         return;
     }
+
+    console.log(glyph);
 
     let dom = null;
 
@@ -50,11 +53,16 @@ export function render(glyph, parent, option) {
             }
 
             if (option === "paint") {
+                console.log("paint");
                 for (const curator of curators) {
                     if (curator.name == glyph.props.curator) {
+                        console.log(curator);
+
                         if (glyph.props.glyph) {
+                            console.log("paint glyph");
                             curator.instance.paint(glyph.props.glyph);
                         } else {
+                            console.log("paint default");
                             curator.instance.paint();
                         }
                         
@@ -62,6 +70,7 @@ export function render(glyph, parent, option) {
                     }
                 }
             } else {
+                console.log('spawn');
                 spawn("../dist/assets/" + glyph.props.curator + ".js");
             }
         }
@@ -93,11 +102,17 @@ export function render(glyph, parent, option) {
     return dom;
 }
 
-function prefetch(glyph) {
+function prefetch(glyph, mode = "test") {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
         if (glyph.props.curator) {
             if (!curators.some(item => item.name == glyph.props.curator)) {
-                const curator = spawn("../dist/assets/" + glyph.props.curator + ".js", false);
+                let curator = null;
+                
+                if (mode == "demo") {
+                    curator = spawn("../dist/assets/" + glyph.props.curator + "-curator.js", false);
+                } else {
+                    curator = spawn("../dist/assets/" + glyph.props.curator + ".js", false);
+                }
 
                 curators.push({
                     name: glyph.props.curator,
@@ -108,7 +123,7 @@ function prefetch(glyph) {
     } else if (typeof glyph === "string") {
         
     } else {
-        prefetch(glyph.type(glyph.props));
+        prefetch(glyph.type(glyph.props), mode);
     }
 
     if (typeof glyph === "object" && glyph.props.children) {
@@ -120,7 +135,7 @@ function prefetch(glyph) {
 
         if (Array.isArray(children)) {
             for (let child of children) {
-                prefetch(child);
+                prefetch(child, mode);
             }
         }
     }

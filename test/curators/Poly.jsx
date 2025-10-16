@@ -1,4 +1,4 @@
-function Glyph1() {
+export function Glyph1() {
     return (
         <div aesthetic="prism">
             <h1>Glyph 1</h1>
@@ -7,7 +7,7 @@ function Glyph1() {
     );
 }
 
-function Glyph2() {
+export function Glyph2() {
     return (
         <div aesthetic="prism">
             <h1>Glyph 2</h1>
@@ -16,7 +16,7 @@ function Glyph2() {
     );
 }
 
-function Glyph3() {
+export function Glyph3() {
     return (
         <div aesthetic="prism">
             <h1>Glyph 3</h1>
@@ -25,11 +25,11 @@ function Glyph3() {
     );
 }
 
-const glyphs = [
+/*const glyphs = [
     { name: "glyph1", component: Glyph1 },
     { name: "glyph2", component: Glyph2 },
     { name: "glyph3", component: Glyph3 },
-];
+];*/
 
 self.onmessage = (ev) => {
     if (typeof ev.data === "object") {
