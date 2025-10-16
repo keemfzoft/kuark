@@ -2,6 +2,7 @@ export function App() {
     return (
         <div layout="admin">
             <div curator="header">Header</div>
+            <my-element></my-element>
             <Curator name="content" />
             <div>
                 <div curator="poly" glyph="glyph1"></div>
