@@ -107,17 +107,36 @@ export function render(glyph, parent, option, mode = "test") {
     return dom;
 }
 
-export function emit(ev) {
+export function emitx(ev) {
     if (typeof ev.data === "object") {
         if (ev.data.action == "paint") {
             for (let glyph of glyphs) {
                 if (glyph.name == ev.data.glyph) {
                     self.postMessage({
                         target: ev.data.glyph,
-                        glyph: glyph.component(),
+                        glyph: resolve(glyph.component()),
                     });
                     
                     break;
+                }
+            }
+        }
+    }
+}
+
+export function emit(glyphs) {
+    return (ev) => {
+        if (typeof ev.data === "object") {
+            if (ev.data.action == "paint") {
+                for (let glyph of glyphs) {
+                    if (glyph.name == ev.data.glyph) {
+                        self.postMessage({
+                            target: ev.data.glyph,
+                            glyph: resolve(glyph.component()),
+                        });
+                        
+                        break;
+                    }
                 }
             }
         }
@@ -163,7 +182,7 @@ function prefetch(glyph, mode = "test") {
     }
 }
 
-function resolve(glyph) {
+export function resolve(glyph) {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
         return resolve(glyph.type());
     }

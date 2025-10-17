@@ -161,7 +161,8 @@ export function Kuark() {
                     }
 
                     content += `const glyphs = [${list}];\n`;
-                    content += `
+                    content += `self.onmessage = emit(glyphs)\n`;
+                    /*content += `
                         // Test
                         self.onmessage = (ev) => {
                             if (typeof ev.data === "object") {
@@ -179,9 +180,9 @@ export function Kuark() {
                                 }
                             }
                         }
-                    `;
+                    `;*/
 
-                    content += `
+                    /*content += `
                         // Test
                         function resolve(glyph) {
                             if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
@@ -204,7 +205,7 @@ export function Kuark() {
 
                             return glyph;
                         }
-                    `;
+                    `;*/
 
                     return content;
                 }
@@ -216,6 +217,18 @@ export function Kuark() {
             }*/
 
             //console.log(id);
+        },
+        transform(code, id) {
+            const pattern = /curator/g;
+
+            if (pattern.test(id)) {
+                const transformed = `import { emit } from "../../core/render.js";\n${code}`;
+
+                return {
+                    code: transformed,
+                    map: null // or generate source map
+                };
+            }
         },
         generateBundle(_, bundle) {
             console.log('Bundle contents:', Object.keys(bundle));
