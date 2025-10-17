@@ -3,7 +3,12 @@ function Header() {
         <div>
             <h1>Header</h1>
             <small>This is a header</small>
-            <p curator="test"></p>
+            <div>
+                <h3>Test Internal Curator</h3>
+                <div>
+                    <p curator="test"></p>
+                </div>
+            </div>
         </div>
     );
 }

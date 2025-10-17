@@ -21,20 +21,23 @@ export function deploy(name) {
  * 
  * @param string curator
  */
-export function spawn(name) {
-    return new Curator(name);
+export function spawn(name, testAuto = true) {
+    return new Curator(name, testAuto);
 }
 
 class Curator {
-    constructor(name) {
+    constructor(name, testAuto = true) {
         const e = this;
-        const worker = new Worker(name, { type: "module" });
+        
+        this.worker = new Worker(name, { type: "module" });
 
-        worker.onmessage = (ev) => {
+        this.worker.onmessage = (ev) => {
             e.render(ev);
         }
 
-        worker.postMessage("test");
+        if (testAuto) {
+            this.worker.postMessage("test");
+        }
     }
 
     render(ev) {
@@ -42,5 +45,16 @@ class Curator {
         const el = document.getElementById(ev.data.target);
 
         render(ev.data.glyph, el);
+    }
+
+    paint(glyph) {
+        if (glyph) {
+            this.worker.postMessage({
+                action: "paint",
+                glyph,
+            });
+        } else {
+            this.worker.postMessage("paint");
+        }
     }
 }

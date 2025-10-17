@@ -14,8 +14,8 @@ export default function TestAggregatePlugin() {
                 const pattern2 = /layout="(.+?)"/g;
 
                 for (const match of code.matchAll(pattern)) {
-                    console.log("test");
-                    console.log(match[1]);
+                    //console.log("test");
+                    //console.log(match[1]);
                     aesthetics.push(match[1]);
                 }
 
@@ -37,7 +37,7 @@ export default function TestAggregatePlugin() {
 
                 if (fs.existsSync(file)) {
                     const content = fs.readFileSync(file, "utf-8");
-                    console.log(content);
+                    //console.log(content);
                     aggregated += '\n' + content + '\n';
                 }
             }
@@ -63,7 +63,7 @@ export default function TestAggregatePlugin() {
             for (const fileName in bundle) {
                 if (fileName.endsWith('.css')) {
                     aggregated += bundle[fileName].source + '\n';
-                    delete bundle[fileName]; // optional: remove originals
+                    //delete bundle[fileName]; // optional: remove originals
                 }
             }
             

@@ -3,7 +3,7 @@ export default {
         {
             postcssPlugin: 'my-transformer',
             Once(root) {
-                console.log(root);
+                //console.log(root);
 
                 root.walkRules(rule => {
                     // Example: prefix all selectors

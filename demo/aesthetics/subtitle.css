@@ -1,0 +1,11 @@
+.subtitle {
+    
+    font-size: 40px;
+    font-weight: 500;
+
+    .highlight {
+        font-family: "Orbitron", sans-serif;
+        font-weight: 500;
+        color: rgb(64, 112, 236);
+    }
+}
