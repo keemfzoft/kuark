@@ -7,14 +7,12 @@ export function render(glyph, parent, option, mode = "test") {
     if (option == "prefetch-curators") {
         console.log(mode);
         prefetch(glyph, mode);
-        render(glyph, parent, "paint");
+        render(glyph, parent, "paint", mode);
 
         console.log(curators);
 
         return;
     }
-
-    console.log(glyph);
 
     let dom = null;
 
@@ -58,16 +56,13 @@ export function render(glyph, parent, option, mode = "test") {
             }
 
             if (option === "paint") {
-                console.log("paint");
                 for (const curator of curators) {
                     if (curator.name == glyph.props.curator) {
                         console.log(curator);
 
                         if (glyph.props.glyph) {
-                            console.log("paint glyph");
                             curator.instance.paint(glyph.props.glyph);
                         } else {
-                            console.log("paint default");
                             curator.instance.paint(glyph.props.curator);
                         }
                         
@@ -76,13 +71,15 @@ export function render(glyph, parent, option, mode = "test") {
                 }
             } else {
                 console.log('spawn');
-                spawn("../dist/assets/" + glyph.props.curator + ".js");
+                console.log(option);
+                console.log(glyph.props.curator);
+                spawn("/dist/assets/" + glyph.props.curator + "-curator.js");
             }
         }
     } else if (typeof glyph === "string") {
         dom = document.createTextNode(glyph);
     } else if (typeof glyph.type === "function") {
-        render(glyph.type(glyph.props), parent, option);
+        render(glyph.type(glyph.props), parent, option, mode);
     }
 
     if (dom) {
@@ -95,7 +92,7 @@ export function render(glyph, parent, option, mode = "test") {
 
             if (Array.isArray(children)) {
                 for (let child of children) {
-                    render(child, dom, option);
+                    render(child, dom, option, mode);
                     parent.appendChild(dom);
                 }
             }
@@ -139,20 +136,36 @@ export function emit(glyphs) {
                     }
                 }
             }
+        } else if (ev.data === "paint") {
+            const glyph = glyphs[0];
+            
+            self.postMessage({
+                target: glyph.name,
+                glyph: resolve(glyph.component()),
+            });
         }
     }
 }
 
 function prefetch(glyph, mode = "test") {
+    console.log(glyph);
+
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
+        console.log("prefetch check");
+        console.log(glyph.props.curator);
+
         if (glyph.props.curator) {
             if (!curators.some(item => item.name == glyph.props.curator)) {
                 let curator = null;
+
+                console.log("prefetch");
+                console.log(glyph.props.curator);
+                console.log(mode);
                 
                 if (mode == "demo") {
-                    curator = spawn("../dist/assets/" + glyph.props.curator + "-curator.js", false);
+                    curator = spawn("/dist/assets/" + glyph.props.curator + "-curator.js", false);
                 } else {
-                    curator = spawn("../dist/assets/" + glyph.props.curator + ".js", false);
+                    curator = spawn("/dist/assets/" + glyph.props.curator + ".js", false);
                 }
 
                 curators.push({
@@ -162,7 +175,8 @@ function prefetch(glyph, mode = "test") {
             }
         }
     } else if (typeof glyph === "string") {
-        
+        console.log("glyph string");
+        console.log(glyph);
     } else {
         prefetch(glyph.type(glyph.props), mode);
     }
@@ -184,7 +198,7 @@ function prefetch(glyph, mode = "test") {
 
 export function resolve(glyph) {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
-        return resolve(glyph.type());
+        return resolve(glyph.type(glyph.props));
     }
 
     if (typeof glyph === "object" && glyph.props.children) {

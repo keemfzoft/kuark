@@ -59,8 +59,11 @@ export function Kuark() {
                 }
             }
 
+            console.log(curators);
+
             for (let curator of curators) {
                 const name = capitalize(curator);
+                console.log(curator);
                 
                 options.input[`${curator}-curator`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
             }
@@ -108,12 +111,15 @@ export function Kuark() {
                 if (fs.existsSync(file)) {
                     let content = fs.readFileSync(file, "utf-8");
 
-                    const pattern = /^(\..+?)\s*{/g;
+                    console.log(file);
+
+                    const pattern = /(\..+?)\s*{/g;
 
                     for (const match of content.matchAll(pattern)) {
                         const selector = match[1];
+                        const pattern2 = new RegExp(selector, "g");
 
-                        content = content.replace(pattern, `${selector}-layout {`);    
+                        content = content.replace(pattern2, `${selector}-layout`);    
                     }
 
                     source += content + '\n';

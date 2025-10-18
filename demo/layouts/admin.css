@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+
+body {
+    .admin {
+        font-family: "Barlow", "Orbitron", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: normal;
+        color: rgb(63, 63, 70);
+        max-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #eee;
+        overflow: hidden;
+    }
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+  
+*::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+}
+  
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(224, 224, 224);
+    border-radius: 14px;
+    border: 3px solid rgb(224, 224, 224);
+}

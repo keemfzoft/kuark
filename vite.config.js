@@ -25,6 +25,7 @@ async function getConfig() {
                         glyph: "test/sample.glyph",
                         prefetch: "test/prefetch.js",
                         demo: "demo/index.jsx",
+                        admin: "demo/admin/index.jsx",
                     },
                     output: {
                         entryFileNames: 'assets/[name].js',
