@@ -20,6 +20,7 @@ export function Desk() {
     return (
         <div layout="quarter" aesthetic="desk">
             {cards.map(props => <Card {...props} />)}
+            <Card name="Topics" description="Total number of topics" value="150" />
         </div>
     );
 }

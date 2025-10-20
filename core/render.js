@@ -197,11 +197,15 @@ function prefetch(glyph, mode = "test") {
 }
 
 export function resolve(glyph) {
+    if (glyph.props.layout == "quarter") {
+        console.log(glyph);
+    }
+
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
         return resolve(glyph.type(glyph.props));
     }
 
-    if (typeof glyph === "object" && glyph.props.children) {
+    if (!Array.isArray(glyph) && typeof glyph === "object" && glyph.props.children) {
         let children = glyph.props.children;
 
         if (!Array.isArray(children)) {
@@ -209,9 +213,20 @@ export function resolve(glyph) {
         }
 
         if (Array.isArray(children)) {
+            const glyphs = [];
+
             for (let [index, child] of children.entries()) {
-                glyph.props.children[index] = resolve(child);
+                if (Array.isArray(child)) {
+                    for (let subglyph of child) {
+                        glyphs.push(resolve(subglyph));
+                    }
+                } else {
+                    //glyph.props.children[index] = resolve(child);
+                    glyphs.push(resolve(child));
+                }
             }
+            
+            glyph.props.children = glyphs;
         }
     }
 
