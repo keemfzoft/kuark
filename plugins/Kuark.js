@@ -23,6 +23,7 @@ export function Kuark() {
             const curators = [];
             const aesthetics = [];
             const layouts = [];
+            const skins = [];
 
             for (let key in files) {
                 const file = path.resolve(rootDir, files[key]);
@@ -32,6 +33,7 @@ export function Kuark() {
                     const pattern = /curator="(.+?)"/g;
                     const pattern2 = /aesthetic="(.+?)"/g;
                     const pattern3 = /layout="(.+?)"/g;
+                    const pattern4 = /skin="(.+?)"|skin:\s*"(.+?)"/g;
 
                     for (const match of content.matchAll(pattern)) {
                         const curator = match[1];
@@ -56,6 +58,15 @@ export function Kuark() {
                             layouts.push(layout);
                         }
                     }
+
+                    for (const match of content.matchAll(pattern4)) {
+                        const skin = match[2];
+                        console.log(skin);
+
+                        if (!skins.includes(skin)) {
+                            skins.push(skin);
+                        }
+                    }
                 }
             }
 
@@ -70,8 +81,37 @@ export function Kuark() {
 
             let source = "";
 
+            console.log(aesthetics);
+
             for (let aesthetic of aesthetics) {
                 const file = path.join(rootDir, `aesthetics/${aesthetic}.css`);
+
+                if (fs.existsSync(file)) {
+                    let content = fs.readFileSync(file, "utf-8");
+
+                    const pattern = /(\..+?)\s*{/g;
+                    const patched = [];
+
+                    for (const match of content.matchAll(pattern)) {
+                        const selector = match[1];
+                        const pattern2 = new RegExp(`${selector}`, "g");
+
+                        if (!patched.includes(selector)) {
+                            content = content.replace(pattern2, `${selector}-aesthetic`);    
+                            patched.push(selector);
+                        }
+                    }
+
+                    source += content + '\n';
+                }
+            }
+
+            //source = "";
+
+            console.log(skins);
+
+            for (let skin of skins) {
+                const file = path.join(rootDir, `skins/${skin}.css`);
 
                 if (fs.existsSync(file)) {
                     let content = fs.readFileSync(file, "utf-8");
@@ -82,14 +122,12 @@ export function Kuark() {
                         const selector = match[1];
                         const pattern2 = new RegExp(selector, "g");
 
-                        content = content.replace(pattern2, `${selector}-aesthetic`);    
+                        content = content.replace(pattern2, `${selector}-skin`);    
                     }
 
                     source += content + '\n';
                 }
             }
-
-            
 
             /*aestheticsRef = this.emitFile({
                 type: "asset",

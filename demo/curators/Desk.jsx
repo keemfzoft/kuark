@@ -18,9 +18,12 @@ export function Desk() {
     ];
 
     return (
-        <div layout="quarter" aesthetic="desk">
-            {cards.map(props => <Card {...props} />)}
-            <Card name="Topics" description="Total number of topics" value="150" />
+        <div aesthetic="desk">
+            <div layout="quarter" aesthetic="figures">
+                {cards.map(props => <Card {...props} />)}
+                <Card name="Topics" description="Total number of topics" value="150" />
+            </div>
+            <div curator="figur"></div>
         </div>
     );
 }

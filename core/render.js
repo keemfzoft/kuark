@@ -31,6 +31,10 @@ export function render(glyph, parent, option, mode = "test") {
             dom.className = `${dom.className} ${glyph.props.aesthetic}-aesthetic`;
         }
 
+        if (glyph.props.skin) {
+            dom.className = `${dom.className} ${glyph.props.skin}-skin`;
+        }
+
         // For testing purposes
         if (glyph.props.source) {
             dom.src = glyph.props.source;
@@ -205,11 +209,11 @@ export function resolve(glyph) {
         return resolve(glyph.type(glyph.props));
     }
 
-    if (!Array.isArray(glyph) && typeof glyph === "object" && glyph.props.children) {
+    if (typeof glyph === "object" && glyph.props.children) {
         let children = glyph.props.children;
 
-        if (!Array.isArray(children)) {
-            //children = [children];
+        if (!Array.isArray(children) && typeof children === "object") {
+            children = [children];
         }
 
         if (Array.isArray(children)) {
