@@ -18,7 +18,7 @@ export function Shelf() {
 
     const cards = [
         { title: "Introduction", description: "A brief overview of the system's purpose, philosophy, and core capabilities." },
-        { title: "Basic Usage", description: "Step-by-step instructions for getting started with the toolkit." },
+        { title: "Basic Usage", description: "Step-by-step instructions for getting started with the visual kit." },
         { title: "Glyphs", description: "A visual reference for available icons, symbols, or UI primitives." },
         { title: "Curators", description: "Oversee the selection, refinement, and organization of components within the system." },
         { title: "Deep Dive", description: "An in-depth exploration of advanced features, architectural decisions, and edge-case handling." },
