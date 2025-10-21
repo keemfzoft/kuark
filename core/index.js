@@ -36,12 +36,12 @@ class Curator {
         }
 
         if (testAuto) {
-            this.worker.postMessage("test");
+            //this.worker.postMessage("test");
+            this.paint();
         }
     }
 
     render(ev) {
-        console.log(ev);
         const el = document.getElementById(ev.data.target);
 
         render(ev.data.glyph, el);

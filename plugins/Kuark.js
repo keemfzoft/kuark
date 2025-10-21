@@ -5,8 +5,47 @@ export function Kuark() {
     //const aestheticsVirtualID = "virtual:kuark-aesthetics";
     //let aestheticsRef = null;
 
+    let serving = false;
+    let virtualLayouts = "";
+    let virtualAesthetics = "";
+
     return {
         name: "kuark-vite-plugin-test",
+        /*configureServer(server) {
+            server.middlewares.use((req, res, next) => {
+                if (req.url === '/dist/assets/demo.js') {
+                    res.setHeader('Content-Type', 'application/javascript');
+                    res.end(`
+                        import '/demo/index.jsx';
+                        import '/virtual/aesthetics.css';
+                    `);
+
+                    return;
+                } else if (req.url === "/dist/assets/admin.js") {
+                    res.setHeader('Content-Type', 'application/javascript');
+                    res.end(`
+                        import '/demo/admin/index.jsx';
+                        import '/virtual/aesthetics.css';
+                    `);
+
+                    return;
+                }
+
+                next();
+            });
+        },*/
+        configResolved(config) {
+            const isDev = config.command === "serve";
+
+            if (isDev) {
+                console.log("🟢 Kuark is running in dev mode");
+            } else {
+                console.log("🔵 Kuark is building for production");
+            }
+
+            serving = isDev;
+
+        },
         buildStart(options) {
             const rootDir = path.resolve(path.join(process.cwd(), "demo"));
             const files = listFilesRecursively(rootDir);
@@ -23,6 +62,7 @@ export function Kuark() {
             const curators = [];
             const aesthetics = [];
             const layouts = [];
+            const skins = [];
 
             for (let key in files) {
                 const file = path.resolve(rootDir, files[key]);
@@ -32,6 +72,7 @@ export function Kuark() {
                     const pattern = /curator="(.+?)"/g;
                     const pattern2 = /aesthetic="(.+?)"/g;
                     const pattern3 = /layout="(.+?)"/g;
+                    const pattern4 = /skin="(.+?)"|skin:\s*"(.+?)"/g;
 
                     for (const match of content.matchAll(pattern)) {
                         const curator = match[1];
@@ -56,19 +97,67 @@ export function Kuark() {
                             layouts.push(layout);
                         }
                     }
+
+                    for (const match of content.matchAll(pattern4)) {
+                        const skin = match[2];
+                        console.log(skin);
+
+                        if (!skins.includes(skin)) {
+                            skins.push(skin);
+                        }
+                    }
                 }
             }
 
+            console.log(curators);
+
             for (let curator of curators) {
                 const name = capitalize(curator);
+                console.log(curator);
                 
-                options.input[`${curator}-curator`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
+                //options.input[`${curator}-curator`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
+                //options.input[`${curator}`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
+                
+                if (serving) {
+                    options.input[`${curator}`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
+                } else {
+                    options.input[`${curator}-curator`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
+                }
             }
 
             let source = "";
 
+            console.log(aesthetics);
+
             for (let aesthetic of aesthetics) {
                 const file = path.join(rootDir, `aesthetics/${aesthetic}.css`);
+
+                if (fs.existsSync(file)) {
+                    let content = fs.readFileSync(file, "utf-8");
+
+                    const pattern = /(\..+?)\s*{/g;
+                    const patched = [];
+
+                    for (const match of content.matchAll(pattern)) {
+                        const selector = match[1];
+                        const pattern2 = new RegExp(`${selector}`, "g");
+
+                        if (!patched.includes(selector)) {
+                            content = content.replace(pattern2, `${selector}-aesthetic`);    
+                            patched.push(selector);
+                        }
+                    }
+
+                    source += content + '\n';
+                }
+            }
+
+            //source = "";
+
+            console.log(skins);
+
+            for (let skin of skins) {
+                const file = path.join(rootDir, `skins/${skin}.css`);
 
                 if (fs.existsSync(file)) {
                     let content = fs.readFileSync(file, "utf-8");
@@ -79,14 +168,14 @@ export function Kuark() {
                         const selector = match[1];
                         const pattern2 = new RegExp(selector, "g");
 
-                        content = content.replace(pattern2, `${selector}-aesthetic`);    
+                        content = content.replace(pattern2, `${selector}-skin`);    
                     }
 
                     source += content + '\n';
                 }
             }
 
-            
+            virtualAesthetics = source;
 
             /*aestheticsRef = this.emitFile({
                 type: "asset",
@@ -94,11 +183,14 @@ export function Kuark() {
                 source,
             });*/
 
-            this.emitFile({
-                type: "asset",
-                fileName: "assets/aesthetics.css",
-                source,
-            });
+            if (!serving) {
+                this.emitFile({
+                    type: "asset",
+                    fileName: "assets/aesthetics.css",
+                    source,
+                });
+            }
+            
 
             source = "";
 
@@ -108,34 +200,98 @@ export function Kuark() {
                 if (fs.existsSync(file)) {
                     let content = fs.readFileSync(file, "utf-8");
 
-                    const pattern = /^(\..+?)\s*{/g;
+                    console.log(file);
+
+                    const pattern = /(\..+?)\s*{/g;
 
                     for (const match of content.matchAll(pattern)) {
                         const selector = match[1];
+                        const pattern2 = new RegExp(selector, "g");
 
-                        content = content.replace(pattern, `${selector}-layout {`);    
+                        content = content.replace(pattern2, `${selector}-layout`);    
                     }
 
                     source += content + '\n';
                 }
             }
 
-            this.emitFile({
-                type: "asset",
-                fileName: "assets/layouts.css",
-                source,
-            });
-        },
-        /*resolveId(id) {
-            if (id === aestheticsVirtualID) {
-                return `\\0${aestheticsVirtualID}`;
+            virtualLayouts = source;
+
+            if (!serving) {
+                this.emitFile({
+                    type: "asset",
+                    fileName: "assets/layouts.css",
+                    source,
+                });
             }
-        },*/
+        },
+        resolveId(id) {
+            if (id.endsWith("/assets/demo.js")) {
+                console.log("resolve");
+                return "/demo/index.jsx";
+            }
+
+            if (id.endsWith("/assets/admin.js")) {
+                return "/demo/admin/index.jsx";
+            }
+
+            if (id.endsWith("/assets/aesthetics.css?direct")) {
+                //return "/virtual/aesthetics.css";
+            }
+
+            if (id.endsWith("/assets/layouts.css?direct")) {
+                //return "/virtual/layouts.css";
+            }
+        },
         load(id) {
             const pattern = /curator/g;
 
+            console.log(id);
+            const rootDir = path.resolve(path.join(process.cwd(), "demo"));
+
+            if (id === "/demo/index.jsx") {
+                const file = path.join(rootDir, `/index.jsx`);
+                const code = fs.readFileSync(file, "utf-8");
+
+                return {
+                    code, 
+                };
+            }
+
+            if (id === "/demo/admin/index.jsx") {
+                const file = path.join(rootDir, `/admin/index.jsx`);
+                const code = fs.readFileSync(file, "utf-8");
+
+                return {
+                    code, 
+                };
+            }
+
+            if (id.endsWith("/assets/aesthetics.css?direct")) {
+                return {
+                    code: virtualAesthetics,
+                    meta: {
+                        vite: {
+                            lang: "css",
+                        },
+                    },
+                };
+            } else if (id.endsWith("/assets/layouts.css?direct")) {
+                return {
+                    code: virtualLayouts,
+                    meta: {
+                        vite: {
+                            lang: "css",
+                        },
+                    },
+                };
+            }
+
             if (pattern.test(id)) {
                 const file = id;
+
+                console.log("test");
+                console.log(file);
                 
                 if (fs.existsSync(file)) {
                     const glyphs = [];
@@ -221,9 +377,11 @@ export function Kuark() {
         transform(code, id) {
             const pattern = /curator/g;
 
+            console.log(id);
+
             if (pattern.test(id)) {
                 const transformed = `import { emit } from "../../core/render.js";\n${code}`;
-
+                
                 return {
                     code: transformed,
                     map: null // or generate source map
@@ -232,7 +390,16 @@ export function Kuark() {
         },
         generateBundle(_, bundle) {
             console.log('Bundle contents:', Object.keys(bundle));
-        }
+        },
+        handleHotUpdate({ server, file }) {
+            if (file.endsWith('.css')) {
+                /*server.ws.send({
+                    type: 'full-reload',
+                    path: '*'
+                });*/
+                server.restart();
+            }
+        },
     };
 }
 

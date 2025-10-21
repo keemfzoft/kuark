@@ -1,0 +1,5 @@
+.app-widgets {
+    flex-grow: 1;
+    justify-items: end;
+    align-content: center;
+}

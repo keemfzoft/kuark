@@ -1,0 +1,9 @@
+.appbar {
+    display: flex;
+    gap: 20px;
+    padding: 15px 30px;
+
+    .title-aesthetic {
+        font-size: 12px !important;
+    }
+}

@@ -13,7 +13,8 @@ async function getConfig() {
             resolve: {
                 extensions: ["*", ".js", ".jsx", ".json"],
                 alias: {
-                    kuark: path.resolve(__dirname, "core")
+                    kuark: path.resolve(__dirname, "core"),
+                    demo: path.resolve(__dirname, "demo"),
                 },
             },
             build: {
@@ -25,6 +26,7 @@ async function getConfig() {
                         glyph: "test/sample.glyph",
                         prefetch: "test/prefetch.js",
                         demo: "demo/index.jsx",
+                        admin: "demo/admin/index.jsx",
                     },
                     output: {
                         entryFileNames: 'assets/[name].js',
@@ -45,9 +47,9 @@ async function getConfig() {
             },
             plugins: [
                 Kuark(),
-                TestTransformPlugin(),
-                TestPlugin(),
-                TestAggregatePlugin(),
+                //TestTransformPlugin(),
+                //TestPlugin(),
+                //TestAggregatePlugin(),
             ],
             esbuild: {
                 jsx: "automatic",

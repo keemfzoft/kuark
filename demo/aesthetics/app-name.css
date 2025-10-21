@@ -1,0 +1,11 @@
+.app-brand {
+    font-family: "Orbitron", sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+
+    .zoft {
+        color: #4070ec;
+    }
+}

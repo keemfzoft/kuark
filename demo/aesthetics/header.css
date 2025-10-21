@@ -1,0 +1,5 @@
+.header {
+    /*background: linear-gradient(135deg, #89CFF0, #4070ec);*/
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}

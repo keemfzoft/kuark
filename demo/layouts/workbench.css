@@ -1,0 +1,14 @@
+.workbench {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+
+    #sidebar {
+        width: 20%;
+        overflow: auto;
+    }
+
+    #workspace {
+        flex-grow: 1;
+    }
+}
