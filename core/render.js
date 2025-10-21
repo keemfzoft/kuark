@@ -77,7 +77,14 @@ export function render(glyph, parent, option, mode = "test") {
                 console.log('spawn');
                 console.log(option);
                 console.log(glyph.props.curator);
-                spawn("/dist/assets/" + glyph.props.curator + "-curator.js");
+                //spawn("/dist/assets/" + glyph.props.curator + "-curator.js");
+                //spawn(`/demo/curators/${glyph.props.curator}.jsx`);
+
+                if (import.meta.env.DEV) {
+                    spawn(`/demo/curators/${glyph.props.curator}.jsx`);
+                } else {
+                    spawn("/dist/assets/" + glyph.props.curator + "-curator.js");
+                }
             }
         }
     } else if (typeof glyph === "string") {
@@ -167,9 +174,23 @@ function prefetch(glyph, mode = "test") {
                 console.log(mode);
                 
                 if (mode == "demo") {
-                    curator = spawn("/dist/assets/" + glyph.props.curator + "-curator.js", false);
+                    //curator = spawn("/dist/assets/" + glyph.props.curator + "-curator.js", false);
+                    //curator = spawn(`/demo/curators/${glyph.props.curator}.jsx`, false);
+                    
+                    if (import.meta.env.DEV) {
+                        curator = spawn(`/demo/curators/${glyph.props.curator}.jsx`, false);
+                    } else {
+                        curator = spawn("/dist/assets/" + glyph.props.curator + "-curator.js", false);
+                    }
                 } else {
-                    curator = spawn("/dist/assets/" + glyph.props.curator + ".js", false);
+                    //curator = spawn("/dist/assets/" + glyph.props.curator + ".js", false);
+                    //curator = spawn(`/demo/curators/${glyph.props.curator}.jsx`, false);
+
+                    if (import.meta.env.DEV) {
+                        curator = spawn(`/demo/curators/${glyph.props.curator}.jsx`, false);
+                    } else {
+                        curator = spawn("/dist/assets/" + glyph.props.curator + ".js", false);
+                    }
                 }
 
                 curators.push({

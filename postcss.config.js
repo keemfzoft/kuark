@@ -7,7 +7,7 @@ export default {
 
                 root.walkRules(rule => {
                     // Example: prefix all selectors
-                    rule.selectors = rule.selectors.map(sel => `.my-prefix ${sel}`);
+                    //rule.selectors = rule.selectors.map(sel => `.my-prefix ${sel}`);
                 });
             },
         },
