@@ -63,6 +63,7 @@ export function Kuark() {
             const aesthetics = [];
             const layouts = [];
             const skins = [];
+            const motions = [];
 
             for (let key in files) {
                 const file = path.resolve(rootDir, files[key]);
@@ -73,6 +74,7 @@ export function Kuark() {
                     const pattern2 = /aesthetic="(.+?)"/g;
                     const pattern3 = /layout="(.+?)"/g;
                     const pattern4 = /skin="(.+?)"|skin:\s*"(.+?)"/g;
+                    const pattern5 = /motion="(.+?)"/g;
 
                     for (const match of content.matchAll(pattern)) {
                         const curator = match[1];
@@ -104,6 +106,14 @@ export function Kuark() {
 
                         if (!skins.includes(skin)) {
                             skins.push(skin);
+                        }
+                    }
+
+                    for (const match of content.matchAll(pattern5)) {
+                        const motion = match[1];
+
+                        if (!motions.includes(motion)) {
+                            motions.push(motion);
                         }
                     }
                 }
@@ -169,6 +179,25 @@ export function Kuark() {
                         const pattern2 = new RegExp(selector, "g");
 
                         content = content.replace(pattern2, `${selector}-skin`);    
+                    }
+
+                    source += content + '\n';
+                }
+            }
+
+            for (let motion of motions) {
+                const file = path.join(rootDir, `motions/${motion}.css`);
+
+                if (fs.existsSync(file)) {
+                    let content = fs.readFileSync(file, "utf-8");
+
+                    const pattern = /(\..+?)\s*{/g;
+
+                    for (const match of content.matchAll(pattern)) {
+                        const selector = match[1];
+                        const pattern2 = new RegExp(selector, "g");
+
+                        content = content.replace(pattern2, `${selector}-motion`);    
                     }
 
                     source += content + '\n';

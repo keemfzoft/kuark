@@ -35,6 +35,10 @@ export function render(glyph, parent, option, mode = "test") {
             dom.className = `${dom.className} ${glyph.props.skin}-skin`;
         }
 
+        if (glyph.props.motion) {
+            dom.className = `${dom.className} ${glyph.props.motion}-motion`;
+        }
+
         // For testing purposes
         if (glyph.props.source) {
             dom.src = glyph.props.source;
