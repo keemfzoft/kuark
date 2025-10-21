@@ -26,7 +26,7 @@ export function Shelf() {
     ];
 
     return (
-        <div layout="shelf">
+        <div layout="shelf" motion="test">
             {cards.map(props => <Card {...props} />)}
         </div>
     );
