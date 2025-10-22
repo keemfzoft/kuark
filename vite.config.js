@@ -46,7 +46,7 @@ async function getConfig() {
                 minify: false,
             },
             plugins: [
-                Kuark(),
+                //Kuark(),
                 //TestTransformPlugin(),
                 //TestPlugin(),
                 //TestAggregatePlugin(),
