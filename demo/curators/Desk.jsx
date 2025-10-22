@@ -19,11 +19,11 @@ export function Desk() {
 
     return (
         <div aesthetic="desk">
-            <div layout="quarter" aesthetic="figures">
+            <div layout="quarter" aesthetic="figures" motion="fade-in-up">
                 {cards.map(props => <Card {...props} />)}
                 <Card name="Topics" description="Total number of topics" value="150" />
             </div>
-            <div curator="figur"></div>
+            <div curator="figur" motion="fade-in-up"></div>
         </div>
     );
 }

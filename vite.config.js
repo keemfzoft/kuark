@@ -3,7 +3,7 @@ import path from "path";
 import TestPlugin from "./plugins/TestPlugin";
 import TestTransformPlugin from "./plugins/TestTransformPlugin";
 import TestAggregatePlugin from "./plugins/TestAggregatePlugin";
-import { Kuark } from "./plugins/Kuark";
+import { Kuark } from "./plugins/vite";
 
 async function getConfig() {
     return defineConfig(async ({ mode }) => {
@@ -13,8 +13,8 @@ async function getConfig() {
             resolve: {
                 extensions: ["*", ".js", ".jsx", ".json"],
                 alias: {
-                    kuark: path.resolve(__dirname, "core"),
-                    demo: path.resolve(__dirname, "demo"),
+                    kuark: path.resolve(__dirname, ""),
+                    app: path.resolve(__dirname, "demo"),
                 },
             },
             build: {
@@ -53,7 +53,7 @@ async function getConfig() {
             ],
             esbuild: {
                 jsx: "automatic",
-                jsxImportSource: "kuark",
+                jsxImportSource: "kuark/core",
             },
         };
     });

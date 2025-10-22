@@ -2,67 +2,25 @@ import fs from "fs";
 import path from "path";
 
 export function Kuark() {
-    //const aestheticsVirtualID = "virtual:kuark-aesthetics";
-    //let aestheticsRef = null;
-
     let serving = false;
     let virtualLayouts = "";
     let virtualAesthetics = "";
 
     return {
         name: "kuark-vite-plugin-test",
-        /*configureServer(server) {
-            server.middlewares.use((req, res, next) => {
-                if (req.url === '/dist/assets/demo.js') {
-                    res.setHeader('Content-Type', 'application/javascript');
-                    res.end(`
-                        import '/demo/index.jsx';
-                        import '/virtual/aesthetics.css';
-                    `);
-
-                    return;
-                } else if (req.url === "/dist/assets/admin.js") {
-                    res.setHeader('Content-Type', 'application/javascript');
-                    res.end(`
-                        import '/demo/admin/index.jsx';
-                        import '/virtual/aesthetics.css';
-                    `);
-
-                    return;
-                }
-
-                next();
-            });
-        },*/
         configResolved(config) {
             const isDev = config.command === "serve";
 
-            if (isDev) {
-                console.log("🟢 Kuark is running in dev mode");
-            } else {
-                console.log("🔵 Kuark is building for production");
-            }
-
             serving = isDev;
-
         },
         buildStart(options) {
             const rootDir = path.resolve(path.join(process.cwd(), "demo"));
             const files = listFilesRecursively(rootDir);
-            /*const filesx = fs.readdirSync(rootDir)
-                .filter(file => file.endsWith('.jsx'))
-                .reduce((inputs, file) => {
-                    const name = path.basename(file, '.jsx');
-                    
-                    inputs[name] = `./${file}`;
-                    
-                    return inputs;
-                }, {});*/
-
             const curators = [];
             const aesthetics = [];
             const layouts = [];
             const skins = [];
+            const motions = [];
 
             for (let key in files) {
                 const file = path.resolve(rootDir, files[key]);
@@ -73,6 +31,7 @@ export function Kuark() {
                     const pattern2 = /aesthetic="(.+?)"/g;
                     const pattern3 = /layout="(.+?)"/g;
                     const pattern4 = /skin="(.+?)"|skin:\s*"(.+?)"/g;
+                    const pattern5 = /motion="(.+?)"/g;
 
                     for (const match of content.matchAll(pattern)) {
                         const curator = match[1];
@@ -100,24 +59,25 @@ export function Kuark() {
 
                     for (const match of content.matchAll(pattern4)) {
                         const skin = match[2];
-                        console.log(skin);
 
                         if (!skins.includes(skin)) {
                             skins.push(skin);
                         }
                     }
+
+                    for (const match of content.matchAll(pattern5)) {
+                        const motion = match[1];
+
+                        if (!motions.includes(motion)) {
+                            motions.push(motion);
+                        }
+                    }
                 }
             }
 
-            console.log(curators);
-
             for (let curator of curators) {
                 const name = capitalize(curator);
-                console.log(curator);
-                
-                //options.input[`${curator}-curator`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
-                //options.input[`${curator}`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
-                
+
                 if (serving) {
                     options.input[`${curator}`] = path.join(process.cwd(), `demo/curators/${name}.jsx`);
                 } else {
@@ -126,8 +86,6 @@ export function Kuark() {
             }
 
             let source = "";
-
-            console.log(aesthetics);
 
             for (let aesthetic of aesthetics) {
                 const file = path.join(rootDir, `aesthetics/${aesthetic}.css`);
@@ -152,10 +110,6 @@ export function Kuark() {
                 }
             }
 
-            //source = "";
-
-            console.log(skins);
-
             for (let skin of skins) {
                 const file = path.join(rootDir, `skins/${skin}.css`);
 
@@ -175,13 +129,26 @@ export function Kuark() {
                 }
             }
 
-            virtualAesthetics = source;
+            for (let motion of motions) {
+                const file = path.join(rootDir, `motions/${motion}.css`);
 
-            /*aestheticsRef = this.emitFile({
-                type: "asset",
-                fileName: "assets/aesthetics.css",
-                source,
-            });*/
+                if (fs.existsSync(file)) {
+                    let content = fs.readFileSync(file, "utf-8");
+
+                    const pattern = /(\..+?)\s*{/g;
+
+                    for (const match of content.matchAll(pattern)) {
+                        const selector = match[1];
+                        const pattern2 = new RegExp(selector, "g");
+
+                        content = content.replace(pattern2, `${selector}-motion`);    
+                    }
+
+                    source += content + '\n';
+                }
+            }
+
+            virtualAesthetics = source;
 
             if (!serving) {
                 this.emitFile({
@@ -190,7 +157,6 @@ export function Kuark() {
                     source,
                 });
             }
-            
 
             source = "";
 
@@ -199,9 +165,6 @@ export function Kuark() {
 
                 if (fs.existsSync(file)) {
                     let content = fs.readFileSync(file, "utf-8");
-
-                    console.log(file);
-
                     const pattern = /(\..+?)\s*{/g;
 
                     for (const match of content.matchAll(pattern)) {
@@ -234,19 +197,9 @@ export function Kuark() {
             if (id.endsWith("/assets/admin.js")) {
                 return "/demo/admin/index.jsx";
             }
-
-            if (id.endsWith("/assets/aesthetics.css?direct")) {
-                //return "/virtual/aesthetics.css";
-            }
-
-            if (id.endsWith("/assets/layouts.css?direct")) {
-                //return "/virtual/layouts.css";
-            }
         },
         load(id) {
             const pattern = /curator/g;
-
-            console.log(id);
             const rootDir = path.resolve(path.join(process.cwd(), "demo"));
 
             if (id === "/demo/index.jsx") {
@@ -289,9 +242,6 @@ export function Kuark() {
 
             if (pattern.test(id)) {
                 const file = id;
-
-                console.log("test");
-                console.log(file);
                 
                 if (fs.existsSync(file)) {
                     const glyphs = [];
@@ -318,66 +268,13 @@ export function Kuark() {
 
                     content += `const glyphs = [${list}];\n`;
                     content += `self.onmessage = emit(glyphs)\n`;
-                    /*content += `
-                        // Test
-                        self.onmessage = (ev) => {
-                            if (typeof ev.data === "object") {
-                                if (ev.data.action == "paint") {
-                                    for (let glyph of glyphs) {
-                                        if (glyph.name == ev.data.glyph) {
-                                            self.postMessage({
-                                                target: ev.data.glyph,
-                                                glyph: resolve(glyph.component()),
-                                            });
-                                            
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    `;*/
-
-                    /*content += `
-                        // Test
-                        function resolve(glyph) {
-                            if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
-                                return resolve(glyph.type());
-                            }
-
-                            if (typeof glyph === "object" && glyph.props.children) {
-                                let children = glyph.props.children;
-
-                                if (!Array.isArray(children)) {
-                                    //children = [children];
-                                }
-
-                                if (Array.isArray(children)) {
-                                    for (let [index, child] of children.entries()) {
-                                        glyph.props.children[index] = resolve(child);
-                                    }
-                                }
-                            }
-
-                            return glyph;
-                        }
-                    `;*/
 
                     return content;
                 }
-            }/* else if (id === `\\0${aestheticsVirtualID}`) {
-                console.log("load " + aestheticsVirtualID);
-                console.log(aestheticsRef);
-
-                return `export default import.meta.ROLLUP_FILE_URL_${aestheticsRef};`;
-            }*/
-
-            //console.log(id);
+            }
         },
         transform(code, id) {
             const pattern = /curator/g;
-
-            console.log(id);
 
             if (pattern.test(id)) {
                 const transformed = `import { emit } from "../../core/render.js";\n${code}`;
@@ -389,14 +286,10 @@ export function Kuark() {
             }
         },
         generateBundle(_, bundle) {
-            console.log('Bundle contents:', Object.keys(bundle));
+            
         },
         handleHotUpdate({ server, file }) {
             if (file.endsWith('.css')) {
-                /*server.ws.send({
-                    type: 'full-reload',
-                    path: '*'
-                });*/
                 server.restart();
             }
         },
