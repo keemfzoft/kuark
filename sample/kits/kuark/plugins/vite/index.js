@@ -21,7 +21,7 @@ export function Kuark() {
         },
         buildStart(options) {
             const rootDir = path.resolve(path.join(process.cwd(), env.VITE_APP_BASE));
-            const files = listFilesRecursively(rootDir);
+            const files =  Helper.getFiles(rootDir);
 
             Helper.set({
                 env,
@@ -160,23 +160,3 @@ export function Kuark() {
         },
     };
 }
-
-function listFilesRecursively(dir) {
-    let results = [];
-    const list = fs.readdirSync(dir);
-
-    list.forEach(file => {
-        const fullPath = path.join(dir, file);
-        const stat = fs.statSync(fullPath);
-
-        if (stat && stat.isDirectory()) {
-            results = results.concat(listFilesRecursively(fullPath));
-        } else {
-            results.push(fullPath);
-        }
-    });
-
-    return results;
-}
-
-const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
