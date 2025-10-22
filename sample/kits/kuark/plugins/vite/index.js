@@ -110,6 +110,7 @@ export function Kuark() {
                 
                 if (fs.existsSync(file)) {
                     const glyphs = [];
+                    
                     let content = fs.readFileSync(file, "utf-8");
                     const pattern = /export function\s*(.*?)\(/g;
 

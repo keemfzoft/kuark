@@ -3,7 +3,8 @@ import { render } from "./render";
 /**
  * Function used to spawn curators (Web Workers that handle UI rendering)
  * 
- * @param string curator
+ * @param string name
+ * @param bool autoPaint
  */
 export function spawn(name, autoPaint = true) {
     return new Curator(name, autoPaint);

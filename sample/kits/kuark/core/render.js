@@ -3,6 +3,14 @@ import { spawn } from "./index";
 const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 const curators = [];
 
+/**
+ * Function used to compose a visual fragment and renders the resulting glyph to the parent element.
+ * 
+ * @param {*} glyph 
+ * @param {HTMLElement} parent 
+ * @param {string} option 
+ * @returns 
+ */
 export function render(glyph, parent, option) {
     if (option == "prefetch-curators") {
         prefetch(glyph);
@@ -111,6 +119,12 @@ export function render(glyph, parent, option) {
     return dom;
 }
 
+/**
+ * Function used to emit requested glyphs from curators.
+ * 
+ * @param {array} glyphs 
+ * @returns 
+ */
 export function emit(glyphs) {
     return (ev) => {
         if (typeof ev.data === "object") {
@@ -137,6 +151,11 @@ export function emit(glyphs) {
     }
 }
 
+/**
+ * Function used to prefetch and spawn curators on-demand.
+ * 
+ * @param {*} glyph 
+ */
 function prefetch(glyph) {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
         if (glyph.props.curator) {
@@ -177,6 +196,13 @@ function prefetch(glyph) {
     }
 }
 
+/**
+ * Function used to prepare and compose the virtual representation of the glyph
+ * in a form of object that is emitted by the curators.
+ * 
+ * @param {*} glyph 
+ * @returns 
+ */
 export function resolve(glyph) {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
         return resolve(glyph.type(glyph.props));
