@@ -3,10 +3,18 @@ import { spawn } from "./index";
 const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 const curators = [];
 
-export function render(glyph, parent, option, mode = "test") {
+/**
+ * Function used to compose a visual fragment and renders the resulting glyph to the parent element.
+ * 
+ * @param {*} glyph 
+ * @param {HTMLElement} parent 
+ * @param {string} option 
+ * @returns 
+ */
+export function render(glyph, parent, option) {
     if (option == "prefetch-curators") {
-        prefetch(glyph, mode);
-        render(glyph, parent, "paint", mode);
+        prefetch(glyph);
+        render(glyph, parent, "paint");
 
         return;
     }
@@ -74,16 +82,18 @@ export function render(glyph, parent, option, mode = "test") {
                 }
             } else {
                 if (import.meta.env.DEV) {
-                    spawn(`/demo/curators/${glyph.props.curator}.jsx`);
+                    const base = import.meta.env.VITE_APP_BASE;
+
+                    spawn(`/${base}/curators/${glyph.props.curator}.jsx`);
                 } else {
-                    spawn("/dist/assets/" + glyph.props.curator + "-curator.js");
+                    spawn("./dist/assets/" + glyph.props.curator + "-curator.js");
                 }
             }
         }
     } else if (typeof glyph === "string") {
         dom = document.createTextNode(glyph);
     } else if (typeof glyph.type === "function") {
-        render(glyph.type(glyph.props), parent, option, mode);
+        render(glyph.type(glyph.props), parent, option);
     }
 
     if (dom) {
@@ -96,7 +106,8 @@ export function render(glyph, parent, option, mode = "test") {
 
             if (Array.isArray(children)) {
                 for (let child of children) {
-                    render(child, dom, option, mode);
+                    render(child, dom, option);
+
                     parent.appendChild(dom);
                 }
             }
@@ -108,6 +119,12 @@ export function render(glyph, parent, option, mode = "test") {
     return dom;
 }
 
+/**
+ * Function used to emit requested glyphs from curators.
+ * 
+ * @param {array} glyphs 
+ * @returns 
+ */
 export function emit(glyphs) {
     return (ev) => {
         if (typeof ev.data === "object") {
@@ -134,24 +151,22 @@ export function emit(glyphs) {
     }
 }
 
-function prefetch(glyph, mode = "test") {
+/**
+ * Function used to prefetch and spawn curators on-demand.
+ * 
+ * @param {*} glyph 
+ */
+function prefetch(glyph) {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "string") {
         if (glyph.props.curator) {
             if (!curators.some(item => item.name == glyph.props.curator)) {
+                const base = import.meta.env.VITE_APP_BASE;
                 let curator = null;
                 
-                if (mode == "demo") {
-                    if (import.meta.env.DEV) {
-                        curator = spawn(`/demo/curators/${glyph.props.curator}.jsx`, false);
-                    } else {
-                        curator = spawn("/dist/assets/" + glyph.props.curator + "-curator.js", false);
-                    }
+                if (import.meta.env.DEV) {
+                    curator = spawn(`/${base}/curators/${glyph.props.curator}.jsx`, false);
                 } else {
-                    if (import.meta.env.DEV) {
-                        curator = spawn(`/demo/curators/${glyph.props.curator}.jsx`, false);
-                    } else {
-                        curator = spawn("/dist/assets/" + glyph.props.curator + ".js", false);
-                    }
+                    curator = spawn("./dist/assets/" + glyph.props.curator + "-curator.js", false);
                 }
 
                 curators.push({
@@ -163,7 +178,7 @@ function prefetch(glyph, mode = "test") {
     } else if (typeof glyph === "string") {
         
     } else {
-        prefetch(glyph.type(glyph.props), mode);
+        prefetch(glyph.type(glyph.props));
     }
 
     if (typeof glyph === "object" && glyph.props.children) {
@@ -175,12 +190,19 @@ function prefetch(glyph, mode = "test") {
 
         if (Array.isArray(children)) {
             for (let child of children) {
-                prefetch(child, mode);
+                prefetch(child);
             }
         }
     }
 }
 
+/**
+ * Function used to prepare and compose the virtual representation of the glyph
+ * in a form of object that is emitted by the curators.
+ * 
+ * @param {*} glyph 
+ * @returns 
+ */
 export function resolve(glyph) {
     if (glyph.class === "kuark.glyph" && typeof glyph.type === "function") {
         return resolve(glyph.type(glyph.props));

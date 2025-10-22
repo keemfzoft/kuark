@@ -1,4 +1,4 @@
-import { render } from "kuark/render";
-import { App } from "demo/App";
+import { render } from "kuark";
+import { App } from "./App";
 
-render(<App />, document.getElementById("app"), "prefetch-curators", "demo");
+render(<App />, document.getElementById("app"), "prefetch-curators");
