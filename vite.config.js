@@ -33,17 +33,8 @@ async function getConfig() {
                         chunkFileNames: 'assets/[name].js',
                         assetFileNames: 'assets/[name].[ext]'
                     },
-                    onwarn(warning, warn) {
-                        // Ignore "use client" warnings
-                        if (warning.code === "MODULE_LEVEL_DIRECTIVE" && warning.message.includes("use client")) {
-                            return;
-                        }
-
-                        // Use default for everything else
-                        warn(warning);
-                    },
                 },
-                minify: false,
+                minify: true,
             },
             plugins: [
                 Kuark(),
