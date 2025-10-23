@@ -21,11 +21,11 @@ async function getConfig() {
                 rollupOptions: {
                     input: {
                         index: "test/index.js",
-                        main: "test/index.jsx",
+                        test: "test/index.jsx",
                         component: "test/component.jsx",
                         glyph: "test/sample.glyph",
                         prefetch: "test/prefetch.js",
-                        demo: "demo/index.jsx",
+                        main: "demo/index.jsx",
                         admin: "demo/admin/index.jsx",
                     },
                     output: {
