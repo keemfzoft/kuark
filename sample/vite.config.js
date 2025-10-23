@@ -13,7 +13,6 @@ async function getConfig() {
                 },
             },
             build: {
-                //outDir: "build",
                 rollupOptions: {
                     input: {
                         main: "app/index.jsx",
@@ -24,7 +23,7 @@ async function getConfig() {
                         assetFileNames: 'assets/[name].[ext]'
                     },
                 },
-                minify: false,
+                minify: true,
             },
             plugins: [
                 Kuark(),

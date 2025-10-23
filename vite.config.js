@@ -21,11 +21,11 @@ async function getConfig() {
                 rollupOptions: {
                     input: {
                         index: "test/index.js",
-                        main: "test/index.jsx",
+                        test: "test/index.jsx",
                         component: "test/component.jsx",
                         glyph: "test/sample.glyph",
                         prefetch: "test/prefetch.js",
-                        demo: "demo/index.jsx",
+                        main: "demo/index.jsx",
                         admin: "demo/admin/index.jsx",
                     },
                     output: {
@@ -33,17 +33,8 @@ async function getConfig() {
                         chunkFileNames: 'assets/[name].js',
                         assetFileNames: 'assets/[name].[ext]'
                     },
-                    onwarn(warning, warn) {
-                        // Ignore "use client" warnings
-                        if (warning.code === "MODULE_LEVEL_DIRECTIVE" && warning.message.includes("use client")) {
-                            return;
-                        }
-
-                        // Use default for everything else
-                        warn(warning);
-                    },
                 },
-                minify: false,
+                minify: true,
             },
             plugins: [
                 Kuark(),

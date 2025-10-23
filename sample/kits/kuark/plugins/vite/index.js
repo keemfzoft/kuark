@@ -1,10 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { loadEnv } from "vite"
+import { loadEnv, transformWithEsbuild } from "vite"
 import { Helper } from "./helper";
 
 export function Kuark() {
     let env = null;
+    let minify = false;
     let serving = false;
     let virtualLayouts = "";
     let virtualAesthetics = "";
@@ -18,8 +19,9 @@ export function Kuark() {
             const isDev = config.command === "serve";
 
             serving = isDev;
+            minify = config?.build?.minify !== false;
         },
-        buildStart(options) {
+        async buildStart(options) {
             const rootDir = path.resolve(path.join(process.cwd(), env.VITE_APP_BASE));
             const files =  Helper.getFiles(rootDir);
 
@@ -49,10 +51,15 @@ export function Kuark() {
             virtualAesthetics = source;
 
             if (!serving) {
+                const result = await transformWithEsbuild(source, "assets/aesthetics.css", {
+                    loader: "css",
+                    minify,
+                });
+
                 this.emitFile({
                     type: "asset",
                     fileName: "assets/aesthetics.css",
-                    source,
+                    source: result.code,
                 });
             }
 
@@ -60,10 +67,15 @@ export function Kuark() {
             virtualLayouts = source;
 
             if (!serving) {
+                const result = await transformWithEsbuild(source, "assets/layouts.css", {
+                    loader: "css",
+                    minify,
+                });
+
                 this.emitFile({
                     type: "asset",
                     fileName: "assets/layouts.css",
-                    source,
+                    source: result.code,
                 });
             }
         },
