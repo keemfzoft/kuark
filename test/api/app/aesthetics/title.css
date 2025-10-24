@@ -1,0 +1,11 @@
+.title {
+    font-family: "Orbitron", sans-serif;
+    font-size: 80px;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+
+    .zoft {
+        color: rgb(64, 112, 236);
+    }
+}
