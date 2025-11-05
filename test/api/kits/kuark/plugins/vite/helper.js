@@ -124,12 +124,24 @@ function patchLayouts() {
     let source = "";
 
     for (let layout of layouts) {
-        const file = path.join(rootDir, `layouts/${layout}.css`);
+        let file = path.join(rootDir, `layouts/${layout}.css`);
 
         if (fs.existsSync(file)) {
             const content = patch(file, "layout");
 
             source += content + '\n';
+        }
+
+        file = path.join(rootDir, `layouts/mobile/${layout}.css`);
+
+        if (fs.existsSync(file)) {
+            const content = patch(file, "layout");
+
+            source += `
+                @container (max-width: 399px) {
+                    ${content}
+                }
+            `;
         }
     }
 
