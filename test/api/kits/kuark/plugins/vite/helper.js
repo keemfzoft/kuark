@@ -80,6 +80,27 @@ function patch(file, type) {
     return content;
 }
 
+function adapt(layout, device) {
+    const breakpoints = {
+        mobile: "(max-width: 600px)",
+    };
+
+    const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
+    const file = path.join(rootDir, `layouts/${device}/${layout}.css`);
+
+    if (fs.existsSync(file)) {
+        const content = patch(file, "layout");
+
+        return `
+            @container ${breakpoints[device]} {
+                ${content}
+            }
+        `;
+    }
+
+    return "";
+}
+
 function patchAesthetics() {
     const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
 
@@ -132,17 +153,7 @@ function patchLayouts() {
             source += content + '\n';
         }
 
-        file = path.join(rootDir, `layouts/mobile/${layout}.css`);
-
-        if (fs.existsSync(file)) {
-            const content = patch(file, "layout");
-
-            source += `
-                @container (max-width: 399px) {
-                    ${content}
-                }
-            `;
-        }
+        source += adapt(layout, "mobile");
     }
 
     return source;
