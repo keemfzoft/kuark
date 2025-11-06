@@ -83,6 +83,7 @@ function patch(file, type) {
 function adapt(layout, device) {
     const breakpoints = {
         mobile: "(max-width: 600px)",
+        tablet: "(min-width: 600px) and (max-width: 900px)",
     };
 
     const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
@@ -154,6 +155,7 @@ function patchLayouts() {
         }
 
         source += adapt(layout, "mobile");
+        source += adapt(layout, "tablet");
     }
 
     return source;
