@@ -80,7 +80,7 @@ function patch(file, type) {
     return content;
 }
 
-function adapt(layout, device) {
+function adapt(resource, device, type = "layout") {
     const breakpoints = {
         mobile: "(max-width: 600px)",
         tablet: "(min-width: 600px) and (max-width: 900px)",
@@ -89,11 +89,19 @@ function adapt(layout, device) {
         tv: "(min-width: 1600px)",
     };
 
+    let group = "layouts";
+
+    switch (type) {
+        case "aesthetic":
+            group = "aesthetics";
+            break;
+    }
+
     const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
-    const file = path.join(rootDir, `layouts/${device}/${layout}.css`);
+    const file = path.join(rootDir, `${group}/${device}/${resource}.css`);
 
     if (fs.existsSync(file)) {
-        const content = patch(file, "layout");
+        const content = patch(file, type);
 
         return `
             @container ${breakpoints[device]} {
@@ -118,6 +126,12 @@ function patchAesthetics() {
 
             source += content + '\n';
         }
+
+        source += adapt(aesthetic, "mobile", "aesthetic");
+        source += adapt(aesthetic, "tablet", "aesthetic");
+        source += adapt(aesthetic, "laptop", "aesthetic");
+        source += adapt(aesthetic, "desktop", "aesthetic");
+        source += adapt(aesthetic, "tv", "aesthetic");
     }
 
     for (let skin of skins) {
@@ -157,11 +171,11 @@ function patchLayouts() {
             source += content + '\n';
         }
 
-        source += adapt(layout, "mobile");
-        source += adapt(layout, "tablet");
-        source += adapt(layout, "laptop");
-        source += adapt(layout, "desktop");
-        source += adapt(layout, "tv");
+        source += adapt(layout, "mobile", "layout");
+        source += adapt(layout, "tablet", "layout");
+        source += adapt(layout, "laptop", "layout");
+        source += adapt(layout, "desktop", "layout");
+        source += adapt(layout, "tv", "layout");
     }
 
     return source;
