@@ -32,7 +32,7 @@ export function Tagline() {
 
 export function Cover() {
     return (
-        <div>
+        <div layout="cover">
             <Header />
             <Tagline />
         </div>

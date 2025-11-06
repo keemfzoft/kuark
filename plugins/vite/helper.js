@@ -80,6 +80,31 @@ function patch(file, type) {
     return content;
 }
 
+function adapt(layout, device) {
+    const breakpoints = {
+        mobile: "(max-width: 600px)",
+        tablet: "(min-width: 600px) and (max-width: 900px)",
+        laptop: "(min-width: 900px) and (max-width: 1200px)",
+        desktop: "(min-width: 1200px) and (max-width: 1600px)",
+        tv: "(min-width: 1600px)",
+    };
+
+    const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
+    const file = path.join(rootDir, `layouts/${device}/${layout}.css`);
+
+    if (fs.existsSync(file)) {
+        const content = patch(file, "layout");
+
+        return `
+            @container ${breakpoints[device]} {
+                ${content}
+            }
+        `;
+    }
+
+    return "";
+}
+
 function patchAesthetics() {
     const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
 
@@ -131,6 +156,12 @@ function patchLayouts() {
 
             source += content + '\n';
         }
+
+        source += adapt(layout, "mobile");
+        source += adapt(layout, "tablet");
+        source += adapt(layout, "laptop");
+        source += adapt(layout, "desktop");
+        source += adapt(layout, "tv");
     }
 
     return source;
