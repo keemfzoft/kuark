@@ -95,6 +95,12 @@ function adapt(resource, device, type = "layout") {
         case "aesthetic":
             group = "aesthetics";
             break;
+        case "skin":
+            group = "skins";
+            break;
+        case "motion":
+            group = "motions";
+            break;
     }
 
     const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
@@ -142,6 +148,12 @@ function patchAesthetics() {
 
             source += content + '\n';
         }
+
+        source += adapt(skin, "mobile", "skin");
+        source += adapt(skin, "tablet", "skin");
+        source += adapt(skin, "laptop", "skin");
+        source += adapt(skin, "desktop", "skin");
+        source += adapt(skin, "tv", "skin");
     }
 
     for (let motion of motions) {
@@ -152,6 +164,12 @@ function patchAesthetics() {
 
             source += content + '\n';
         }
+
+        source += adapt(motion, "mobile", "motion");
+        source += adapt(motion, "tablet", "motion");
+        source += adapt(motion, "laptop", "motion");
+        source += adapt(motion, "desktop", "motion");
+        source += adapt(motion, "tv", "motion");
     }
 
     return source;
