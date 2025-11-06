@@ -86,6 +86,7 @@ function adapt(layout, device) {
         tablet: "(min-width: 600px) and (max-width: 900px)",
         laptop: "(min-width: 900px) and (max-width: 1200px)",
         desktop: "(min-width: 1200px) and (max-width: 1600px)",
+        tv: "(min-width: 1600px)",
     };
 
     const rootDir = path.resolve(path.join(process.cwd(), config.env.VITE_APP_BASE));
@@ -160,6 +161,7 @@ function patchLayouts() {
         source += adapt(layout, "tablet");
         source += adapt(layout, "laptop");
         source += adapt(layout, "desktop");
+        source += adapt(layout, "tv");
     }
 
     return source;
