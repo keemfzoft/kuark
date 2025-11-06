@@ -1,3 +1,36 @@
+class Data {
+    constructor(value) {
+        this.value = value;
+        this.class = "kuark.data";
+    }
+
+    set(value) {
+        this.value = value;
+    }
+
+    toString() {
+        return this.value;
+    }
+}
+
+function useData(value) {
+    console.log(this);
+
+    return new Data(value);
+}
+
+const sample = useData("sample data");
+
+export function updateSample() {
+    console.log("update sample");
+    sample.set("updated sample data");
+
+    self.postMessage({
+        action: "repaint",
+        glyph: "cover",
+    });
+}
+
 export function Header() {
     return (
         <div layout="title">
@@ -8,8 +41,10 @@ export function Header() {
             </h1>
             <h2 aesthetic="subtitle">
                 <span aesthetic="highlight">Kuark</span>
-                <span>&nbsp;Visual Kit Demo</span>
+                <span>&nbsp;Visual Kit Test</span>
             </h2>
+            <div>{sample}</div>
+            <button curate="poly" onClick="updateSample">Update</button>
         </div>
     );
 }
@@ -37,4 +72,8 @@ export function Cover() {
             <Tagline />
         </div>
     );
+}
+
+self.onmessage = (ev) => {
+    console.log(ev);
 }

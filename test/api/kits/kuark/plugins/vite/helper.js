@@ -11,7 +11,7 @@ function extract(pattern, content) {
     const matches = [];
 
     for (const match of content.matchAll(pattern)) {
-        const name = match[1] || match[2];
+        const name = match[1];
 
         if (!matches.includes(name)) {
             matches.push(name);
@@ -181,7 +181,7 @@ function patchLayouts() {
     let source = "";
 
     for (let layout of layouts) {
-        const file = path.join(rootDir, `layouts/${layout}.css`);
+        let file = path.join(rootDir, `layouts/${layout}.css`);
 
         if (fs.existsSync(file)) {
             const content = patch(file, "layout");
